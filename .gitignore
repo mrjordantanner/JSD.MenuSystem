@@ -1,0 +1,67 @@
+# Unity generated files
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+
+# Visual Studio generated files
+.vscode/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# MonoDevelop generated files
+*.pidb
+*.mdb
+
+# Rider generated files
+.idea/
+*.sln.iml
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+*.swp
+
+# Unity Asset Store tools
+/Assets/AssetStoreTools*
+
+# Unity auto-generated lightmap files
+/[Ll]ight[mM]ap[sS]/
+
+# Cache files
+/Assets/StreamingAssets/aa.meta
+/Assets/StreamingAssets/aa/
+
+# Crash logs
+*.stacktrace
+
+# Script debugging info
+*.pdb
+
+# Serialized file data and caches
+/MemoryCaptures/
+*.bak
+
+# Logs and profiles
+*.log
+*.profilerlog
+*.profilerlog.raw
+
+# Exclude personal settings
+/Assets/../*.csproj
+*.log
+
+# Don't ignore build scripts or user-defined folders
+!Assets/Scripts/
+!Assets/Prefabs/

@@ -1,0 +1,17 @@
+{
+    "name": "com.jsd.menu-system",
+    "version": "1.0.0",
+    "displayName": "JSD MenuSystem",
+    "description": "Unity Package containing assets, prefabs, scripts, and scenes for a Menu System.",
+    "unity": "2022.3",
+    "unityRelease": "12f1",
+    "author": {
+        "name": "Jordan T. Smith",
+        "email": "mrjordantanner@gmail.com",
+        "url": "https://jordansmithdigital.com"
+    },
+    "dependencies": {
+        "com.unity.textmeshpro": "3.0.6",
+        "com.other.dependency": "1.0.0"
+    },
+}
