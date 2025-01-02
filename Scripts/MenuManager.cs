@@ -4,13 +4,15 @@ using UnityEngine;
 using JSD.Utilities;
 using System.Linq;
 using DG.Tweening;
-using static System.TimeZoneInfo;
+using System;
+using TMPro;
+using UnityEngine.Rendering.LookDev;
 
 
 namespace JSD.MenuSystem
 {
     /// <summary>
-    /// Singleton. Dynamically creates and destroys Menu Prefabs.
+    /// Singleton. Global MenuManager that creates and destroys MenuView Prefabs.
     /// </summary>
     public class MenuManager : Singleton<MenuManager>
     {
@@ -18,12 +20,30 @@ namespace JSD.MenuSystem
         [SerializeField] private Dictionary<string, IMenuPresenterBase> _activeMenus = new();
         private MenuDefinitionObject[] menuDefinitions;
 
+        private SlideAndFadeTransition defaultTransition;
+        private Vector2 defaultTransitionStartOffset = new(-500, 0);
+        private Vector2 defaultTransitionEndOffset = Vector2.zero;
+
+        PauseMenuController pauseMenuController;
+
         protected override void Awake()
         {
             base.Awake();
 
             menuDefinitions = Resources.LoadAll<MenuDefinitionObject>("MenuDefinitions");
             Debug.Log($"Loaded {menuDefinitions.Count()} MenuDefinitions from Resources");
+
+            defaultTransition = new SlideAndFadeTransition(defaultTransitionEndOffset, defaultTransitionStartOffset);
+
+            // Create "Dirty" MenuControllers
+            pauseMenuController = new(
+                "PauseMenu", 
+                new List<IMenuDataProvider<PauseMenuData>>
+                {
+                    Mock_GameManager.Instance,
+                    Mock_LevelManager.Instance,
+                    Mock_PlayerManager.Instance
+                });
         }
 
         public GameObject GetMenuPrefab(string menuId)
@@ -42,7 +62,27 @@ namespace JSD.MenuSystem
             return null;
         }
 
-        public IEnumerator ShowMenu<T>(
+        public MenuDefinitionObject GetMenuDefinition(string menuId) 
+        {
+            var menuDefinition = menuDefinitions.Where(m => m.GetMenuId() == menuId).FirstOrDefault();
+            if (menuDefinition != null)
+            {
+                return menuDefinition;
+
+            }
+            Debug.LogError($"Unable to find Menu Prefab matching MenuId {menuId}");
+            return null;
+        }
+
+        public void CreateMenu<T>(
+            string menuId,
+            IMenuData<T> data,
+            float transitionTime = 0f)
+        {
+            StartCoroutine(CreateMenuRoutine<T>(menuId, data, defaultTransition, transitionTime));
+        }
+
+        private IEnumerator CreateMenuRoutine<T>(
             string menuId,
             IMenuData<T> data,
             IMenuTransition transition = null,
@@ -81,7 +121,7 @@ namespace JSD.MenuSystem
                 {
                     closeButton.Initialize(() =>
                     {
-                        StartCoroutine(CloseMenu(menuId, transition, transitionTime));
+                        StartCoroutine(DestroyMenuRoutine(menuId, transition, transitionTime));
                     });
                 }
             }
@@ -92,7 +132,12 @@ namespace JSD.MenuSystem
             }
         }
 
-        public IEnumerator CloseMenu(string menuId, IMenuTransition transition = null, float transitionTime = 0f)
+        public void DestroyMenu(string menuId, float transitionTime = 0f)
+        {
+            StartCoroutine(DestroyMenuRoutine(menuId, defaultTransition, transitionTime));
+        }
+
+        private IEnumerator DestroyMenuRoutine(string menuId, IMenuTransition transition = null, float transitionTime = 0f)
         {
             if (_activeMenus.TryGetValue(menuId, out var presenter))
             {

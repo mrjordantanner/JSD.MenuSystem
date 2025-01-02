@@ -1,4 +1,9 @@
-public interface IMenuDataProvider<T>
+/// <summary>
+/// A data source for a MenuData model.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface IMenuDataProvider<TMenuData>
 {
-    void PopulateData(T data);
+    string ProviderId { get; }
+    void PopulateData(TMenuData data);
 }
